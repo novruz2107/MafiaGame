@@ -12,7 +12,7 @@ public class Day : LoopElement
         //(Exception: If in first attempt Comissioner chooses Citizen, Citizen is inherited)
         if (Night.NightID % 2 == 0) //After comissioner night
         {
-            if (Night.NightID > 2) //Its not the first attempt
+            if (Night.NightID > 2 && !ComissionerNight.getChosenPlayer().isProtectedByDoc) //Its not the first attempt
             {
                 Debug.Log("Comissioner kicked " + ComissionerNight.getChosenPlayer().Id + " who was " + ComissionerNight.getChosenPlayer().getCharacter().ToString());
                 yield return new Kick(ComissionerNight.getChosenPlayer()).Enumerator;
@@ -25,17 +25,27 @@ public class Day : LoopElement
                     Debug.Log("Therefore, player " + ComissionerNight.getChosenPlayer().Id + " is inherited");
                     (ComissionerNight.getChosenPlayer() as Citizen).InheritAsComissioner();
                 }
-                else
+                else if(!ComissionerNight.getChosenPlayer().isProtectedByDoc)
                 {
                     Debug.Log("Comissioner kicked " + ComissionerNight.getChosenPlayer().Id + " who was " + ComissionerNight.getChosenPlayer().getCharacter().ToString());
                     yield return new Kick(ComissionerNight.getChosenPlayer()).Enumerator;
                 }
             }
+            //TODO: Suka night goes here (Since it is not in order)
+
         }
         else if(Night.NightID > 1) //After mafia night
         {
-            Debug.Log("Don mafia kicked " + MafiaNight.getChosenPlayer().Id + " who was " + MafiaNight.getChosenPlayer().getCharacter().ToString());
-            yield return new Kick(MafiaNight.getChosenPlayer()).Enumerator;
+            if (!MafiaNight.getChosenPlayer().isProtectedByDoc) {
+                Debug.Log("Don mafia kicked " + MafiaNight.getChosenPlayer().Id + " who was " + MafiaNight.getChosenPlayer().getCharacter().ToString());
+                yield return new Kick(MafiaNight.getChosenPlayer()).Enumerator;
+            }
+
+            if (GameLoopController.Current.players.Contains(ManiacNight.getChosenPlayer()) && !ManiacNight.getChosenPlayer().isProtectedByDoc)
+            {
+                Debug.Log("ID: " + ManiacNight.getChosenPlayer().Id + " is kicked by Maniac");
+                yield return new Kick(ManiacNight.getChosenPlayer()).Enumerator;
+            }
         }
 
         //Check if Game over, if yes, stop the coroutine
@@ -46,7 +56,7 @@ public class Day : LoopElement
         yield return new WaitForSeconds(5);
 
         //TODO: Voting begins and while voting goes on, enum waits. 
-        //After voting finished, he/she whom gets the max votes will be kicked out of the game.
+        //After voting finished, he whom gets the max votes will be kicked out of the game.
         new VotingSystem().vote(GameLoopController.Current.players.Count, true);
         yield return new WaitUntilCondition()
         {
@@ -56,7 +66,7 @@ public class Day : LoopElement
         //TODO: If players have the same max number of votes, then again voting goes on
         if(VotingSystem.Instance.chosen == -1)
         {
-            Debug.Log("Since players got the same votes, voting goes on again..");
+            Debug.Log("Since players got the same max votes, voting goes on again..");
             yield return new WaitForSeconds(2);
             new VotingSystem().vote(GameLoopController.Current.players.Count, false);
             yield return new WaitUntilCondition()

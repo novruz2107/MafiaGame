@@ -26,13 +26,16 @@ public class VotingSystem
             int voted_whom;
             if (i == (num - 1) && !allowingSameNumVotes)
             {
+                //GetExceptionVotesForLastPlayer is for last person choosing,
+                //since he can only choose some players to prevent same num of max votes.
+                //It returns the players whom the last chooser cannot choose.                
                 List<int> result = ListHelper.GetExceptionVotesForLastPlayer(VoteList);
-                result.Add(i);
+                result.Add(i); //Adding himself to the list, since he cannot vote himself
                 voted_whom = ListHelper.RandomExcept(result, num);
             }
             else
             {
-                voted_whom = ListHelper.RandomExcept(i, num);
+                voted_whom = ListHelper.RandomExcept(i, num); //can choose someone except himself
             }
             RPCVote(i, voted_whom);
             Debug.Log(i + " voted " + voted_whom);

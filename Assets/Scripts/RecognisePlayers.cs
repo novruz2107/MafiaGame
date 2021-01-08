@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using Unity;
 
+//This class is used for mafias to recognise each other and vote for Don
 public class RecognisePlayers : LoopElement
 {
     public override IEnumerator enumerator()
@@ -31,6 +32,7 @@ public class RecognisePlayers : LoopElement
 
         mafias[chosen].MakeDon();
         //Below snippet shows to get the Don Mafia
+        //GameLoopController.Current.players.OfType<Mafia>().Where(i => ((i).IsDon())).First().IsDon()
         yield return new WaitForSeconds(2);
 
     }

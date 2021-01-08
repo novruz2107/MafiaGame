@@ -16,10 +16,10 @@ public class MafiaNight : LoopElement
         Debug.Log("Mafias are discussing..");
         yield return new WaitForSeconds(5);
         int chosen = Random.Range(0, GameLoopController.Current.players.Count);
-        while(GameLoopController.Current.players[chosen].getCharacter() == Character.Characters.Mafia)
+        while(GameLoopController.Current.players[chosen].getCharacter() == Character.Characters.Mafia) //choosing someone untill its not mafia
             chosen = Random.Range(0, GameLoopController.Current.players.Count);
         setChosenPlayer(GameLoopController.Current.players[chosen]);
-        Debug.Log("Don mafia chose someone. Mafia Night is over.");
+        Debug.Log("Don mafia chose someone (id:" + GameLoopController.Current.players[chosen].Id + "). Mafia Night is over.");
         yield return new WaitForSeconds(3);
         //TODO: Mafias close their eyes
 

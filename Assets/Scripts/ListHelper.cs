@@ -50,9 +50,9 @@ public static class ListHelper
         int maxNumVote = higherVotes[0] - 1;
         if(higherVotes.Count > 1 && (higherVotes[0] > 1) && (higherVotes[0] == higherVotes[1]))
         {
-            //When two player got max vote, last player can vote one of them only
+            //When two player got max vote, last choser can vote one of them only
             List<int> result = new List<int>(Enumerable.Range(0, VoteList.Count));
-
+            Debug.Log("first cond");
             int k = 0;
             while (higherVotes[0] == higherVotes[k]) {
                 result.Remove(idsWithHigherVotes[k]);
@@ -63,6 +63,8 @@ public static class ListHelper
         }
         else if(higherVotes[0] == 1)
         {
+            //If each player has only one vote, then the last chooser should choose one of them
+            Debug.Log("second cond");
             List<int> result = new List<int>();
             for (int i = 0; i <= VoteList.Count; i++)
                 if(!idsWithHigherVotes.Contains(i))
@@ -71,6 +73,8 @@ public static class ListHelper
         }
         else
         {
+            //If the max vote player has e.g 3 votes, the last chooser cannot vote 2 votes players
+            Debug.Log("third cond");
             return VoteList.GroupBy(i => i).Select((grp) =>
             {
                 if (grp.Count() == maxNumVote)
@@ -79,6 +83,7 @@ public static class ListHelper
                     return -1;
             }).ToList();
         }
+        //I thought about only 3 cases for preventing same num of max votes. If you think better version, refactor it.
     }
 
 
